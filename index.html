@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parfums traduits</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 {
+      font-size: 1.5em;
+      text-align: center;
+    }
+    select {
+      font-size: 16px;
+      margin: 10px 0;
+      width: 100%;
+      padding: 10px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      padding: 8px;
+      border-bottom: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>Sélectionne ta langue</h1>
+  <select id="languageSelect">
+    <option value="0">🇫🇷 Français</option>
+    <option value="1">🇬🇧 English</option>
+    <option value="2">🇩🇪 Deutsch</option>
+    <option value="3">🇪🇸 Español</option>
+    <option value="4">🇮🇹 Italiano</option>
+    <option value="5">🇯🇵 日本語</option>
+  </select>
+
+  <ul id="perfumeList"></ul>
+
+  <script>
+    const sheetURL = 'https://docs.google.com/spreadsheets/d/1Oav1auNy4RHna-8lMY0TkqgIfDqdzg8JZeRLIlg_PUk/gviz/tq?tqx=out:csv&sheet=traduction%20parfum';
+
+    async function loadPerfumes(langIndex) {
+      const response = await fetch(sheetURL);
+      const text = await response.text();
+      const lines = text.trim().split('\n').slice(1); // 🔧 correction ici
+      const list = document.getElementById('perfumeList');
+      list.innerHTML = '';
+
+      lines.forEach(line => {
+        const cols = line.split(',');
+        const fr = cols[0];
+        const translated = cols[langIndex] || '';
+        const li = document.createElement('li');
+        li.textContent = `${fr} – ${translated}`;
+        list.appendChild(li);
+      });
+    }
+
+    const select = document.getElementById('languageSelect');
+    select.addEventListener('change', () => {
+      loadPerfumes(select.value);
+    });
+
+    loadPerfumes(0); // Default: French
+  </script>
+</body>
+</html>
